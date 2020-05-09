@@ -1,5 +1,8 @@
 #Birm
 
+Demo at demo.birm.xyz
+Stable version at app.birm.xyz
+
 ## Getting Started
 
 First, run the development server:
