@@ -3,18 +3,19 @@ import { useEffect } from "react";
 import { isGeoPermitted } from "../helpers/geolocation";
 import { getCurrentPosition } from "../helpers/geolocation";
 import { useRouter } from "next/router";
+import { redirectWithCoordinates } from "../helpers/redirectWithCoordinates";
 
 export default function Home() {
   const router = useRouter();
+
   useEffect(() => {
     async function chooseRoute() {
       const permitted = await isGeoPermitted();
       if (permitted) {
-        const position = await getCurrentPosition();
-        const { latitude, longitude } = position.coords;
-        router.push(`/birms?latitude=${latitude}&longitude=${longitude}`);
+        const { coords } = await getCurrentPosition();
+        redirectWithCoordinates('/birms', coords);
       } else {
-        router.push("/getLocation");
+        router.push(`/getLocation?next=/birms`);
       }
     }
     chooseRoute();

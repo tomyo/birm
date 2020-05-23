@@ -1,19 +1,23 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { isGeoPermitted } from "../helpers/geolocation";
+import { isGeoPermitted, getCurrentPosition } from "../helpers/geolocation";
 import { GeoPrompt } from "../components/GeoPrompt";
-
+import { useRouter } from "next/router";
+import { redirectWithCoordinates } from "../helpers/redirectWithCoordinates";
 
 export default function GetLocation() {
-  const [geoPrompted, setGeoPrompted] = useState(false);
-  // useEffect(setGeoPrompted(isGeoPermitted()));
+  const router = useRouter();
+  const { next } = router.query; // next is url to go after aquiring location
+  const nextUrl = next || "/birms"; // /birms is default redirect route
 
   useEffect(() => {
     async function setGeoPermission() {
       const permitted = await isGeoPermitted();
-      setGeoPrompted(true);
-      console.log(permitted);
+      if (permitted) {
+        const { coords } = await getCurrentPosition();
+        redirectWithCoordinates(nextUrl, coords);
+      }
     }
     setGeoPermission();
   }, []);
@@ -35,7 +39,7 @@ export default function GetLocation() {
 
         <Radar src="/radar.svg" />
 
-        <GeoPrompt prompted={geoPrompted}></GeoPrompt>
+        <GeoPrompt nextUrl={nextUrl}></GeoPrompt>
       </main>
 
       <style jsx>{`
@@ -54,6 +58,7 @@ export default function GetLocation() {
           flex-direction: column;
           align-items: center;
           padding: 11% 0 0;
+          text-align: center;
         }
       `}</style>
     </div>

@@ -1,21 +1,34 @@
 export function getCurrentPosition(options = {}) {
+  // Returns position object (https://developer.mozilla.org/es/docs/Web/API/GeolocationPosition)
+  navigator.geolocation.getCurrentPosition(function () {}, function () {}, {});
+  console.log("about to ask for geo position");
+
   return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject);
+    console.log("asking for geo position");
+    const options = {
+      timeout: 5 * 1000,  // x * seconds t wait until if not response is given is considered error
+      maximumAge: 15 * 1000, // How long ago captured locations is valid still to use
+      enableHighAccuracy: true
+    }
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
   });
 }
 
-export async function askForGeo() {
-  try {
-    console.log("trying");
-    const { coords } = await getCurrentPosition();
-    const { latitude, longitude } = coords;
-    console.log(longitude, latitude);
 
-    // Handle coordinates
-  } catch (error) {
-    // Handle error
-    console.error(error);
-  }
+export function _getCurrentPosition(options = {}) {
+  // Returns position object (https://developer.mozilla.org/es/docs/Web/API/GeolocationPosition)
+  navigator.geolocation.getCurrentPosition(function () {}, function () {}, {});
+  console.log("about to ask for geo position");
+
+  return new Promise((resolve, reject) => {
+    console.log("asking for geo position");
+    const options = {
+      timeout: 5 * 1000,  // x * seconds t wait until if not response is given is considered error
+      maximumAge: 5 * 1000, // How long ago captured locations is valid still to use
+      enableHighAccuracy: true
+    }
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+  });
 }
 
 export async function isGeoPermitted() {

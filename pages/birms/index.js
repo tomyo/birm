@@ -1,63 +1,46 @@
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import NoBirms from "./no-birms";
+import { useState, useEffect } from "react";
+import useSWR from "swr";
+import fetch from "node-fetch";
+import { Flex, Box } from "../../components/grid";
 
+export default function () {
+  const fetcher = (...args) => fetch(...args).then((res) => res.json());
+  const { data, error } = useSWR("/api/birms", fetcher);
+  if (error) return <Box>Error loading birms, please retry.</Box>;
+  if (!data) return <Box>Loading birms...</Box>;
 
-export default function Birms() {
-  const router = useRouter();
-  const { latitude, longitude } = router.query;
-  console.log(latitude, longitude);
-  const mapUrl = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-  return (
-    <StyledNewBirm>
-      <p>
-        Create the first Birm here!{" "}
-        <a href={mapUrl} target="_blank">
-          (debug)
-        </a>
-      </p>
-      {svgMoon}
-    </StyledNewBirm>
-  );
+  const birmCards = data.map((b) => <BirmCard data={b} key={b.id} />);
+  return <Flex flexFlow="column" gap="1em">{birmCards}</Flex>;
 }
 
-const StyledNewBirm = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-direction: column;
-  height: 100vh;
-  p {
-    font-family: Roboto;
-    font-size: 30px;
-    text-align: center;
-    margin: auto 0px;
-    padding: 0px 28px;
-    line-height: 1.4;
-    color: rgb(255, 255, 255);
+const StyledBirmCard = styled(Flex)`
+  padding: 1rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  &:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   }
-  svg {
-    height: 190px;
+  img {
+    border-radius: 50%;
+    width: 5em;
+    height: 5em;
+    object-fit: cover;
   }
 `;
 
-const svgMoon = (
-  <svg width="100%" height="33vh" viewBox="0 0 512 512">
-    <g fillRule="nonzero" fill="none">
-      <path fill="#49494D" d="M245.34 0h21.328v277.33H245.34z"></path>
-      <path
-        d="M256.004 256c-141.383 0-256 114.609-256 256h511.992c0-141.391-114.609-256-255.992-256z"
-        fill="#E6E9ED"
-      ></path>
-      <path
-        fill="#1FAF4D"
-        d="M479.996 170.656H330.668v-128h149.328l-21.312 64z"
-      ></path>
-      <path fill="#37DB6B" d="M266.67 0h128v128h-128z"></path>
-      <g transform="translate(96 320)" fill="#CCD1D9">
-        <path d="M64.004 106.656c0 17.688-14.328 32-32 32s-32-14.312-32-32c0-17.672 14.328-32 32-32s32 14.328 32 32z"></path>
-        <circle cx="298.67" cy="117.33" r="32"></circle>
-        <path d="M202.668 42.656c0 23.578-19.102 42.672-42.664 42.672S117.34 66.234 117.34 42.656C117.34 19.094 136.442 0 160.004 0s42.664 19.094 42.664 42.656z"></path>
-      </g>
-    </g>
-  </svg>
-);
+
+function BirmCard({ data }) {
+  return (
+    <StyledBirmCard>
+      <Box>
+        <img src={`https://picsum.photos/seed/${data.id}/200/300`} alt={data.name}/>
+      </Box>
+      <Box>
+        <h1>{data.name}</h1>
+      </Box>
+    </StyledBirmCard>
+  );
+}
