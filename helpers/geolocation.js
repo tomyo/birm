@@ -6,8 +6,8 @@ export function getCurrentPosition(options = {}) {
   return new Promise((resolve, reject) => {
     console.log("asking for geo position");
     const options = {
-      timeout: 5 * 1000,  // x * seconds t wait until if not response is given is considered error
-      maximumAge: 15 * 1000, // How long ago captured locations is valid still to use
+      timeout: 10 * 1000,  // x * seconds t wait until if not response is given is considered error
+      maximumAge: 10 * 1000, // How long ago captured locations is valid still to use
       enableHighAccuracy: true
     }
     navigator.geolocation.getCurrentPosition(resolve, reject, options);

@@ -23,6 +23,7 @@ export function GeoPrompt({ nextUrl }) {
       redirectWithCoordinates(nextUrl, coords);
     } catch (error) {
       setStatusText(`${error.message}`);
+      setTimeout(() => setStatusText(""), 2000)
     }
   }
 
